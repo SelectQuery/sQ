@@ -1,4 +1,9 @@
 from lxml import etree
+'''
+>>> from selectq import FileBrowser, Attr as attr, Value as val
+>>> browser = FileBrowser()
+>>> sQ = browser.new_selector()
+'''
 
 
 class Browser:
@@ -45,17 +50,10 @@ class Selection:
             )
 
     def _select_xpath_for(self, tag, *predicates, cls=None, **attrs):
-        if all(
-            arg is None for arg in [tag, cls]
-        ) and not attrs and not predicates:
-            raise ValueError(
-                "You need to specify a tag or keyword-selector like 'cls'"
-            )
-
         xpath = ''
         if tag is not None:
             if isinstance(tag, (Selection, Value, Attr)):
-                # explicit "!s" convertion to ignore any parentesis
+                # explicit "!s" conversion to ignore any parenthesis
                 tag = '{!s}'.format(tag)
             xpath += tag
         else:
@@ -70,7 +68,7 @@ class Selection:
                     "Invalid object as predicate: {}".format(repr(predicate))
                 )
 
-            # explicit "!s" convertion to ignore any parentesis
+            # explicit "!s" conversion to ignore any parenthesis
             xpath += "[{!s}]".format(predicate)
 
         for attr_name, attr_value in attrs.items():
@@ -85,13 +83,34 @@ class Selection:
         return xpath
 
     def select(self, tag=None, *predicates, cls=None, **attrs):
+        ''' Select any children that have <tag> or '*' if None; from there,
+            only select the ones that have all the predicates in true.
+
+            The predicates are build from the position arguments <predicates>,
+            the 'class' attribute <cls> and the keyword attributes <attr>.
+
+            >>> sQ.select()
+            sQ .//*
+
+            >>> sQ.select('li', attr('href').endswith('.pdf'), cls='cool', id='uniq')
+            sQ .//li[@class='cool'][ends-with(@href, '.pdf')][@id='uniq']
+        '''
         xpath = self._select_xpath_for(tag, *predicates, cls=cls, **attrs)
         xpath = self.xpath + '//' + xpath
         return Selection(self.browser, xpath)
 
     def children(self, tag=None, *predicates, cls=None, **attrs):
-        if tag is None:
-            tag = '*'
+        ''' Select any direct children.
+
+            It works like `select` but it restricts the selection to
+            only the direct children.
+
+            >>> sQ.children()
+            sQ ./*
+
+            >>> sQ.children('li', attr('href').endswith('.pdf'), cls='cool', id='uniq')
+            sQ ./li[@class='cool'][ends-with(@href, '.pdf')][@id='uniq']
+        '''
         xpath = self._select_xpath_for(tag, *predicates, cls=cls, **attrs)
         xpath = self.xpath + '/' + xpath
         return Selection(self.browser, xpath)
@@ -196,6 +215,22 @@ class Selector(Selection):
 
     def get(self, url):
         self.browser.get(url)
+
+    def abs_select(self, tag=None, *predicates, cls=None, **attrs):
+        ''' Make the selection absolute.
+
+            It works like `select` but it restricts the selection
+            starting from the root.
+
+            >>> sQ.abs_select()
+            sQ /*
+
+            >>> sQ.abs_select('li', attr('href').endswith('.pdf'), cls='cool', id='uniq')
+            sQ /li[@class='cool'][ends-with(@href, '.pdf')][@id='uniq']
+        '''
+        xpath = self._select_xpath_for(tag, *predicates, cls=cls, **attrs)
+        xpath = '/' + xpath
+        return Selection(self.browser, xpath)
 
 
 class Value:
