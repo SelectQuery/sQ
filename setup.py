@@ -58,6 +58,7 @@ setup(
     keywords='xml xpath, html',
 
     packages=['selectq'],
-    data_files=[("", ["LICENSE"])]
+    data_files=[("", ["LICENSE"])],
+    package_data={'selectq':["payload/*"]}
 )
 

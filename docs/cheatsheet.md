@@ -1,9 +1,8 @@
 Taken from https://devhints.io/xpath#class-check
 
 ```python
->>> from selectq import FileBrowser, Attr as attr, Value as val
->>> browser = FileBrowser()
->>> sQ = browser.new_selector()
+>>> from selectq import Selector, Attr as attr, Value as val
+>>> sQ = Selector()
 ```
 
 ## Selectors

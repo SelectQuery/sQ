@@ -9,7 +9,7 @@ in the page.
 But first we need to us a browser to fetch the page:
 
 ```python
->>> from selectq import FileBrowser
+>>> from selectq import FileBrowser, Selector
 
 >>> browser = FileBrowser()
 ```
@@ -23,39 +23,14 @@ with the web page that the browser is, well, browsing.
 By convention we call this `sQ`:
 
 ```python
->>> sQ = browser.new_selector()
+>>> sQ = Selector(browser)
 ```
 
 Let's load this very simple HTML fragment in the browser through
 the selector.
 
 ```python
->>> sQ.get('./test/ds/ul.html')
-```
-
-Because the selector `sQ` represents the whole page we can pretty
-print it and get a nice HTML code:
-
-```python
->>> sQ.pprint()
-<html>
-  <body>
-    <ul class="main" id="a">
-      <li>list item 1</li>
-      <li>list item 2</li>
-      <ul value="1">
-        <li>list item 3</li>
-      </ul>
-    </ul>
-    <ul class="secondary" id="b">
-      <li>list item 4</li>
-      <li>list item 5</li>
-      <ul value="2">
-        <li>list item 6</li>
-      </ul>
-    </ul>
-  </body>
-</html>
+>>> sQ.browser.get('./test/ds/ul.html')
 ```
 
 Select all the list items:

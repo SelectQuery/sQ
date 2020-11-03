@@ -2,3 +2,6 @@ docs/drafts/
 __pycache__
 *.egg-info/
 *.swp
+driver/
+*driver.log
+dist/

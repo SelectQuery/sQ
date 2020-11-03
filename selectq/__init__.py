@@ -1,6 +1,6 @@
 '''Non cryptic XML/HTML parsing'''
 
-__version__ = "0.0.1"
+__version__ = "0.0.2"
 
 _author = 'Di Paola Martin'
 _license = 'GNU GPLv3'
@@ -23,6 +23,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 try:
-    from .selectq import FileBrowser, Selection, Selector, Attr, Value
+    from .selectq import Selection, Selector
+    from .browsers import FileBrowser, WebBrowser
+    from .predicates import Attr, Value
+    from .shortcuts import open_browser
 except SystemError:
     pass  # this happens when importing from setup.py
