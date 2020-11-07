@@ -49,17 +49,17 @@ class FileBrowser(Browser):
         self.tree = etree.fromstring(html, parser)
 
 
-def _close_driver(driver):
+def _quit_driver(driver):
     if driver is not None:
-        driver.close()
+        driver.quit()
 
 
 class WebBrowser(Browser):
     def __init__(self, driver):
         super().__init__()
         self.driver = driver
-        # ensure that we close the driver eventually
-        self._finalizer = weakref.finalize(self, _close_driver, driver)
+        # ensure that we quit the driver eventually
+        self._finalizer = weakref.finalize(self, _quit_driver, driver)
 
     def get(self, url):
         self.driver.get(url)
@@ -67,16 +67,16 @@ class WebBrowser(Browser):
 
     def __del__(self):
         try:
-            # Ensure that we close the driver/browser.
-            # If we don't do this the browser may not close
+            # Ensure that we quit the driver/browser.
+            # If we don't do this the browser may not quit
             # automatically
-            _close_driver(self.driver)
+            _quit_driver(self.driver)
             self.driver = None
         except:
             pass
 
-    def close(self):
-        _close_driver(self.driver)
+    def quit(self):
+        _quit_driver(self.driver)
         self.driver = None
 
     def load_js_file(self, filepath):
@@ -245,6 +245,8 @@ class WebBrowser(Browser):
             strings in the print.
             '''
         html = ''.join(self.pluck(xpath, ['outerHTML']))
+        if not html:
+            return '[empty]'
 
         parser = etree.HTMLParser(remove_blank_text=True)
         tree = etree.fromstring(html, parser)

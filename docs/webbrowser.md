@@ -24,7 +24,7 @@ Check also [Selenium quick reference](https://www.selenium.dev/documentation/en/
 ...         'firefox',
 ...         headless=True,
 ...         executable_path='./driver/geckodriver',
-...         firefox_binary="/usr/bin/firefox-esr")  # byexample: +timeout=30
+...         firefox_binary="/usr/bin/firefox-esr")  # byexample: +timeout=60
 ```
 
 > `open_browser` is just a shortcut to open a Firefox webdriver
@@ -54,5 +54,5 @@ has the substring `'Nav'`:
 Don't forget to close the browser at the end:
 
 ```python
->>> sQ.browser.close()   # byexample: -skip +pass +timeout=30
+>>> sQ.browser.quit()   # byexample: -skip +pass +timeout=60
 ```
