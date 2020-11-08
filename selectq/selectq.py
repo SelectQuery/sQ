@@ -1,6 +1,7 @@
 from lxml import etree
 from .browsers import Browser, _browser_wrapper
 from .predicates import Value, Attr
+from .interactions import InteractionMixin
 '''
 >>> from selectq import FileBrowser, Selector, Attr as attr, Value as val
 >>> browser = FileBrowser()
@@ -8,7 +9,7 @@ from .predicates import Value, Attr
 '''
 
 
-class Selection:
+class Selection(InteractionMixin):
     def __init__(self, browser, xpath):
         self.browser = _browser_wrapper(browser)
         self.xpath = xpath
@@ -19,18 +20,21 @@ class Selection:
     def pprint(self):
         self.browser.pprint(self.xpath)
 
-    def highlight(self):
-        self.browser.highlight(self.xpath)
-
-    def pluck(self, *properties):
-        return self.browser.pluck(self.xpath, properties)
-
     def _select_xpath_for(self, tag, *predicates, cls=None, **attrs):
         xpath = ''
         if tag is not None:
-            if isinstance(tag, (Selection, Value, Attr)):
+            # we accept a selection instead of a tag
+            if isinstance(tag, Selection):
                 # explicit "!s" conversion to ignore any parenthesis
                 tag = '{!s}'.format(tag)
+
+            # we also "accept" a Value/Attr. Internally we say
+            # that the tag is '*' and we treat the Value/Attr as another
+            # predicate
+            elif isinstance(tag, (Value, Attr)):
+                predicates = (tag, ) + predicates
+                tag = '*'
+
             xpath += tag
         else:
             xpath += '*'
@@ -92,6 +96,9 @@ class Selection:
         return Selection(self.browser, xpath)
 
     def has_children(self, selection=None):
+        ''' Select the elements that have children specified by <selection>.
+            If None, select the elements that have at least one child.
+            '''
         if selection is None:
             selection = '*'
         return self.that(selection)
@@ -150,17 +157,20 @@ class Selection:
         return cond
 
     def __getitem__(self, key):
+        ''' From the selection, subselect based on a position or range.
+            The parameter <key> has the same semantics that any other
+            indexing.
+            '''
         cond = self._predicate_from_index(key)
         xpath = "({})[{}]".format(self.xpath, cond)
         return Selection(self.browser, xpath)
 
     def at(self, key):
+        ''' Select those who are at the given position or range
+            respect their parents.
+            '''
         cond = self._predicate_from_index(key)
         xpath = "{}[{}]".format(self.xpath, cond)
-        return Selection(self.browser, xpath)
-
-    def attr(self, name):
-        xpath = "{}/{}".format(self.xpath, Attr(name))
         return Selection(self.browser, xpath)
 
     def query(self, what):

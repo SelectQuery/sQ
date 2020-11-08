@@ -199,19 +199,7 @@ class WebBrowser(Browser):
 
         return self.js_process_elems(xpath, jsbegin, jsforeach, jsend)
 
-    # TODO support for 'foo.bar.baz' properties and for 'invoking' methods
     def pluck(self, xpath, properties):
-        ''' Retrieve one or more properties of each element selected
-            by the xpath.
-
-            If <properties> is a list with a single property name,
-            pluck will return a list of values where each value is
-            the value of the named property.
-
-            If <properties> is a list with more than one name, return
-            a list of lists where each sublist will have the value of each
-            named property.
-            '''
         if not properties:
             raise ValueError('The property list is empty.')
 
@@ -221,18 +209,11 @@ class WebBrowser(Browser):
                 .format(type(properties))
             )
 
-        is_single_prop = len(properties) == 1
-
-        properties = json.dumps(properties)
         jscall = 'selectq.pluck(el, {properties});'.format(
             properties=properties
         )
-        results = self.js_map(xpath, jscall)
 
-        if is_single_prop:
-            return [arr[0] for arr in results]
-
-        return results
+        return self.js_map(xpath, jscall)
 
     def pprint(self, xpath):
         ''' Pretty print the html elements selected by xpath.
@@ -244,7 +225,7 @@ class WebBrowser(Browser):
             result pretty print will have some mixed (undefined)
             strings in the print.
             '''
-        html = ''.join(self.pluck(xpath, ['outerHTML']))
+        html = ''.join(arr[0] for arr in self.pluck(xpath, ['outerHTML']))
         if not html:
             return '[empty]'
 

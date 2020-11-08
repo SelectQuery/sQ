@@ -37,6 +37,8 @@ class Value:
         s = self._group(s)
         return Value("contains({}, {})".format(self, s))
 
+    has = contains
+
     def normalize_space(self):
         return Value("normalize-space({})".format(self))
 
@@ -105,7 +107,13 @@ class Value:
     def __format__(self, format_spec):
         return self._group(self).__format__(format_spec)
 
+    def __repr__(self):
+        return "Predicate {}".format(self)
+
 
 class Attr(Value):
     def __str__(self):
         return "@{}".format(self.val)
+
+
+Text = Value('text()')

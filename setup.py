@@ -18,6 +18,8 @@ long_description = __doc__
 # without them, we cannot run byexample
 required_deps=[
     'lxml',
+    'selenium',
+    'requests'
     ]
 
 setup(

@@ -1,8 +1,6 @@
 from selenium import webdriver
 from selenium.webdriver import Proxy
 
-from .selectq import Selector
-
 
 def open_browser(
     url, browser_type, headless=False, proxy_conf={}, **browser_kargs
@@ -12,6 +10,7 @@ def open_browser(
 
         Return a Selector (sQ) object bound to the browser.
         '''
+    from .selectq import Selector
     if browser_type == 'firefox':
         from selenium.webdriver.firefox.options import Options
         browser_class = webdriver.Firefox

@@ -133,7 +133,7 @@ sQ .//ul/li/..
 >>> sQ.select('li').children('ancestor-or-self::section')
 sQ .//li/ancestor-or-self::section
 
->>> sQ.select('a').attr('href')
+>>> sQ.select('a').query('@href')
 sQ .//a/@href
 
 >>> sQ.select('span').query('text()')

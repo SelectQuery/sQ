@@ -223,6 +223,13 @@ These three are the same:
 </ul>
 ```
 
+The `*` can be omitted:
+
+```python
+>>> sQ.select(val('text()').contains('item 6')).pprint()
+<li>list item 6</li>
+```
+
 ## Union and nesting
 
 Selections can be joined together:
