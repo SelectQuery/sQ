@@ -61,6 +61,6 @@ setup(
 
     packages=['selectq'],
     data_files=[("", ["LICENSE"])],
-    package_data={'selectq':["payload/*"]}
+    package_data={'selectq':["gadgets/*"]}
 )
 

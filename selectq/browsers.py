@@ -8,7 +8,7 @@ import weakref
 import json
 import os.path
 
-PAYLOAD_DIR = os.path.join(os.path.dirname(__file__), 'payload')
+GADGETS_DIR = os.path.join(os.path.dirname(__file__), 'gadgets')
 
 
 class Browser:
@@ -88,8 +88,8 @@ class WebBrowser(Browser):
             self.driver.execute_script(f.read())
 
     def _load_predefined_css_and_js_files(self):
-        self.load_css_file(os.path.join(PAYLOAD_DIR, 'selectq.css'))
-        self.load_js_file(os.path.join(PAYLOAD_DIR, 'selectq.js'))
+        self.load_css_file(os.path.join(GADGETS_DIR, 'selectq.css'))
+        self.load_js_file(os.path.join(GADGETS_DIR, 'selectq.js'))
 
     def load_css_file(self, filepath):
         with open(filepath, 'rt') as f:
