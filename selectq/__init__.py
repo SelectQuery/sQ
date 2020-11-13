@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 try:
     from .selectq import Selection, Selector
     from .browsers import FileBrowser, WebBrowser
-    from .predicates import Attr, Value
+    from .predicates import Attr, Value, Text
     from .shortcuts import open_browser
 except SystemError:
     pass  # this happens when importing from setup.py

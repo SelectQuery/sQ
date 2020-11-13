@@ -2,6 +2,7 @@ from lxml import etree
 
 from selenium.webdriver.common.by import By as SeleniumBy
 from selenium.webdriver.remote.webdriver import WebDriver as RemoteWebDriver
+from selenium.common.exceptions import JavascriptException
 
 import weakref
 import json
@@ -133,6 +134,10 @@ class WebBrowser(Browser):
         existing_result = 'null'
 
         jsexecute = '''
+        if (typeof window.selectq === 'undefined') {{
+            throw new Error("selectq undefined - ijs98uduh");
+        }}
+
         var elems_iter = document.evaluate({xpath}, {context_node},
         {namespace_resolver}, {result_type}, {existing_result});
 
@@ -155,7 +160,11 @@ class WebBrowser(Browser):
             jsend=jsend
         )
 
-        return self.driver.execute_script(jsexecute)
+        try:
+            return self.driver.execute_script(jsexecute)
+        except JavascriptException:
+            self._load_predefined_css_and_js_files()
+            return self.driver.execute_script(jsexecute)
 
     def js_map(self, xpath, jscall):
         ''' Execute the javascript function call <jscall> for each
