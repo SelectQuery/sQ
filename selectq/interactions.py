@@ -143,3 +143,9 @@ class InteractionMixin:
             fnames.append(fname)
 
         return fnames
+
+    def text(self):
+        return self.pluck('textContent')
+
+    def html(self):
+        return self.pluck('outerHTML')
