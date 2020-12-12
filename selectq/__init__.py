@@ -1,6 +1,6 @@
 '''Non cryptic XML/HTML parsing'''
 
-__version__ = "0.0.3"
+__version__ = "0.0.4"
 
 _author = 'Di Paola Martin'
 _license = 'GNU GPLv3'
