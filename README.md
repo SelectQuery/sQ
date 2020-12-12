@@ -44,7 +44,9 @@ First, open a web page using a browser and get a `sQ` object bound to it:
 
 > Other browsers than Firefox are available. Consult the documentation of
 > [selenium](https://selenium-python.readthedocs.io/installation.html#drivers)
-> to read more about them and the drivers needed.
+> to read more about them and the drivers needed. You will have to
+> download the driver of your browser and set the path to it with
+> `executable_path`.
 
 Open the page that has science fiction books:
 
