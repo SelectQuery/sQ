@@ -95,6 +95,18 @@ class InteractionMixin:
 
             elems[0].send_keys(values)
 
+    def clear(self):
+        ''' Clear the selected elements. Use this to clear a text input
+            for example.
+            '''
+        elems = self.web_elements()
+        for el in elems:
+            el.clear()
+
+        # Return self to support sQ(...).clear().send_keys(...)
+        # (aka clear and set a new text)
+        return self
+
     def web_elements(self):
         ''' Retrieve the Selenium WebElements found by the current selection.
 
