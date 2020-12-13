@@ -62,9 +62,13 @@ class WebBrowser(Browser):
         # ensure that we quit the driver eventually
         self._finalizer = weakref.finalize(self, _quit_driver, driver)
 
+        self._gadgets_files = [
+            ('css', os.path.join(GADGETS_DIR, 'selectq.css')),
+            ('js', os.path.join(GADGETS_DIR, 'selectq.js')),
+        ]
+
     def get(self, url):
         self.driver.get(url)
-        self._load_predefined_css_and_js_files()
 
     def __del__(self):
         try:
@@ -87,9 +91,29 @@ class WebBrowser(Browser):
         with open(filepath, 'rt') as f:
             self.driver.execute_script(f.read())
 
-    def _load_predefined_css_and_js_files(self):
-        self.load_css_file(os.path.join(GADGETS_DIR, 'selectq.css'))
-        self.load_js_file(os.path.join(GADGETS_DIR, 'selectq.js'))
+    def _load_gadgets(self):
+        ''' Load CSS/JS files into the current web page. These files are
+            known as 'gadgets' because they extend the ability of the
+            browser to query/manipulate the web page.
+
+            This is called automatically once per web page by
+            the methods of this class that use them.
+
+            More CSS/JS files can be added as default gadgets with the
+            _gadgets_files property.
+
+            If a CSS/JS files needs to be added not by default you can
+            call load_css_file()/load_js_file() explicitly.
+            '''
+        for type, filename in self._gadgets_files:
+            if type == 'css':
+                self.load_css_file(os.path.join(GADGETS_DIR, 'selectq.css'))
+            elif type == 'js':
+                self.load_js_file(os.path.join(GADGETS_DIR, 'selectq.js'))
+            else:
+                raise ValueError(
+                    "Gadget type '{}' is not supported.".format(type)
+                )
 
     def load_css_file(self, filepath):
         with open(filepath, 'rt') as f:
@@ -125,7 +149,12 @@ class WebBrowser(Browser):
 
             Note that in all the cases the injected javascript code
             must be statements ended in semicolons.
+
+            This is a low-level method, prefer pluck() and other
+            high-level methods.
         '''
+
+        not_gadgets_loaded_msj = 'selectq undefined - ijs98uduh'
 
         xpath = json.dumps(xpath)
         context_node = 'document'
@@ -135,7 +164,7 @@ class WebBrowser(Browser):
 
         jsexecute = '''
         if (typeof window.selectq === 'undefined') {{
-            throw new Error("selectq undefined - ijs98uduh");
+            throw new Error("{not_gadgets_loaded_msj}");
         }}
 
         var elems_iter = document.evaluate({xpath}, {context_node},
@@ -150,6 +179,7 @@ class WebBrowser(Browser):
 
         {jsend}
         '''.format(
+            not_gadgets_loaded_msj=not_gadgets_loaded_msj,
             xpath=xpath,
             context_node=context_node,
             namespace_resolver=namespace_resolver,
@@ -162,8 +192,11 @@ class WebBrowser(Browser):
 
         try:
             return self.driver.execute_script(jsexecute)
-        except JavascriptException:
-            self._load_predefined_css_and_js_files()
+        except JavascriptException as e:
+            if not_gadgets_loaded_msj not in str(e):
+                raise
+
+            self._load_gadgets()
             return self.driver.execute_script(jsexecute)
 
     def js_map(self, xpath, jscall):
@@ -173,7 +206,7 @@ class WebBrowser(Browser):
             <jscall> must be a function call. The 'el' variable will
             be pointing to the current element of the iteration.
 
-            Eg: jscall = 'your_function(el)'
+            Eg: jscall = 'your_function(el);'
 
             Note that the <jscall> must end in a semicolon.
             '''
@@ -189,7 +222,7 @@ class WebBrowser(Browser):
 
     def js_call(self, xpath, jscall):
         ''' Execute the javascript function call <jscall> once over an array
-            with the elements selected by <xpath>.
+            of the elements selected by <xpath>.
 
             <jscall> can be a sequence of javascript statements.
             The 'elems' variable will be pointing to the array.
