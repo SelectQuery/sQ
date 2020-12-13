@@ -161,3 +161,7 @@ class InteractionMixin:
 
     def html(self):
         return self.pluck('outerHTML')
+
+    def count(self):
+        jscall = 'return elems.length;'
+        return self.browser.js_call(self.xpath, jscall)

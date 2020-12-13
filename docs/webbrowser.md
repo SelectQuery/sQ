@@ -69,6 +69,9 @@ Internally this works modifying the web page adding the CSS class
 <a href="" class="sQ-highlight">Nav item</a>
 <a href="" class="sQ-highlight">Nav item again</a>
 <a href="" class="sQ-highlight">Nav item again</a>
+
+>>> sQ.select(cls='sQ-highlight').count()
+3
 ```
 
 To remove all the highlight just run
@@ -76,6 +79,8 @@ To remove all the highlight just run
 ```python
 >>> sQ.browser.highlight_off()
 >>> sQ.select(cls='sQ-highlight').pprint() # and nothing is found
+>>> sQ.select(cls='sQ-highlight').count()
+0
 ```
 
 Don't forget to close the browser at the end:
