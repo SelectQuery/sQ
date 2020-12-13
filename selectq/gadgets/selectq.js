@@ -6,14 +6,12 @@
         }
     }
 
+    var toggle_highlight_callbacks = [];
+
     // Add the 'sQ-highlight' class to each element to highlight them
     // Remove the class from the previous selection if any.
     function highlight(elems) {
-        var prev_elems = document.getElementsByClassName('sQ-highlight');
-
-        for (var i = 0; i < prev_elems.length; i++) {
-            prev_elems[i].classList.remove('sQ-highlight');
-        }
+        highlight_off();
 
         for (var i = 0; i < elems.length; i++) {
             elems[i].classList.add('sQ-highlight');
@@ -21,7 +19,26 @@
 
         // must be an even number of rounds
         for (var i = 0; i < 8; i++) {
-            setTimeout(function () { toggle_highlight(elems); }, 150*(i+1));
+            var id = setTimeout(function () { toggle_highlight(elems); }, 150*(i+1));
+            toggle_highlight_callbacks.push(id);
+        }
+    }
+
+    function highlight_off() {
+        // disable any toggle_highlight future call.
+        for (var i = 0; i < toggle_highlight_callbacks.length; i++) {
+            clearTimeout(toggle_highlight_callbacks[i]);
+        }
+        toggle_highlight_callbacks.length = 0;
+
+        var prev_elems = document.getElementsByClassName('sQ-highlight');
+
+        // The array returned by getElementsByClassName() is alive: if
+        // we remove the class from the element, the array is modified
+        // automatically. It is like if we were removing the elements
+        // from the array itself so we cannot iterate it with a "for loop"
+        while (prev_elems.length > 0) {
+            prev_elems[0].classList.remove('sQ-highlight');
         }
     }
 
@@ -66,6 +83,7 @@
         ctx.selectq = {};
 
     ctx.selectq.highlight = highlight;
+    ctx.selectq.highlight_off = highlight_off;
     ctx.selectq.pluck = pluck;
     ctx.selectq.click = click;
     ctx.selectq.add_class = add_class;
