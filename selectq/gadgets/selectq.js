@@ -12,7 +12,7 @@
         var prev_elems = document.getElementsByClassName('sQ-highlight');
 
         for (var i = 0; i < prev_elems.length; i++) {
-            elems[i].classList.remove('sQ-highlight');
+            prev_elems[i].classList.remove('sQ-highlight');
         }
 
         for (var i = 0; i < elems.length; i++) {
