@@ -51,6 +51,33 @@ has the substring `'Nav'`:
 <a href="">Nav item again</a>
 ```
 
+`pprint` is useful to explore the DOM but sometimes can be hard to see
+what are you really selecting.
+
+`highlight` does that: it highlight the elements. Of course you need to
+open the browser with `headless=False` to see something!
+
+```python
+>>> sQ.select('a', val('text()').contains('Nav')).highlight()
+```
+
+Internally this works modifying the web page adding the CSS class
+`sQ-highlight`. You can retrieve them later selecting by class:
+
+```python
+>>> sQ.select(cls='sQ-highlight').pprint()
+<a href="" class="sQ-highlight">Nav item</a>
+<a href="" class="sQ-highlight">Nav item again</a>
+<a href="" class="sQ-highlight">Nav item again</a>
+```
+
+To remove all the highlight just run
+
+```python
+>>> sQ.browser.highlight_off()
+>>> sQ.select(cls='sQ-highlight').pprint() # and nothing is found
+```
+
 Don't forget to close the browser at the end:
 
 ```python

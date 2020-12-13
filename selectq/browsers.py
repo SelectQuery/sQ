@@ -257,6 +257,11 @@ class WebBrowser(Browser):
 
         return self.js_map(xpath, jscall)
 
+    def highlight_off(self):
+        xpath = '.'
+        js = 'return selectq.highlight_off();'
+        return self.js_call(xpath, js)
+
     def pprint(self, xpath):
         ''' Pretty print the html elements selected by xpath.
 
