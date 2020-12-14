@@ -56,7 +56,7 @@ sQ .//a[last()]
 >>> sQ.select('*', id='id')
 sQ .//*[@id='id']
 
->>> sQ.select('*', cls='class')
+>>> sQ.select('*', class_='class')
 sQ .//*[@class='class']
 
 >>> sQ.select('input', type="submit")

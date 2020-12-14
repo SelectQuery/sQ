@@ -20,7 +20,9 @@ class Selection(InteractionMixin):
     def pprint(self):
         self.browser.pprint(self.xpath)
 
-    def _select_xpath_for(self, tag, *predicates, cls=None, **attrs):
+    def _select_xpath_for(
+        self, tag, *predicates, class_=None, for_=None, **attrs
+    ):
         xpath = ''
         if tag is not None:
             # we accept a selection instead of a tag
@@ -39,8 +41,11 @@ class Selection(InteractionMixin):
         else:
             xpath += '*'
 
-        if cls is not None:
-            xpath += "[@class='{}']".format(cls)
+        if class_ is not None:
+            xpath += "[@class='{}']".format(class_)
+
+        if for_ is not None:
+            xpath += "[@for='{}']".format(for_)
 
         for predicate in predicates:
             if not isinstance(predicate, (Selection, Value, Attr)):
@@ -62,24 +67,30 @@ class Selection(InteractionMixin):
 
         return xpath
 
-    def select(self, tag=None, *predicates, cls=None, **attrs):
+    def select(self, tag=None, *predicates, class_=None, for_=None, **attrs):
         ''' Select any children that have <tag> or '*' if None; from there,
             only select the ones that have all the predicates in true.
 
             The predicates are build from the position arguments <predicates>,
-            the 'class' attribute <cls> and the keyword attributes <attr>.
+            the 'class' and 'for' attributes <class_> <for_> and the
+            keyword attributes <attr>.
 
             >>> sQ.select()
             sQ .//*
 
-            >>> sQ.select('li', attr('href').endswith('.pdf'), cls='cool', id='uniq')
+            >>> sQ.select('li', attr('href').endswith('.pdf'), class_='cool', id='uniq')
             sQ .//li[@class='cool'][ends-with(@href, '.pdf')][@id='uniq']
+
+            >>> sQ.select(for_='cool')
+            sQ .//*[@for='cool']
         '''
-        xpath = self._select_xpath_for(tag, *predicates, cls=cls, **attrs)
+        xpath = self._select_xpath_for(
+            tag, *predicates, class_=class_, for_=for_, **attrs
+        )
         xpath = self.xpath + '//' + xpath
         return Selection(self.browser, xpath)
 
-    def children(self, tag=None, *predicates, cls=None, **attrs):
+    def children(self, tag=None, *predicates, class_=None, for_=None, **attrs):
         ''' Select any direct children.
 
             It works like `select` but it restricts the selection to
@@ -88,10 +99,12 @@ class Selection(InteractionMixin):
             >>> sQ.children()
             sQ ./*
 
-            >>> sQ.children('li', attr('href').endswith('.pdf'), cls='cool', id='uniq')
+            >>> sQ.children('li', attr('href').endswith('.pdf'), class_='cool', id='uniq')
             sQ ./li[@class='cool'][ends-with(@href, '.pdf')][@id='uniq']
         '''
-        xpath = self._select_xpath_for(tag, *predicates, cls=cls, **attrs)
+        xpath = self._select_xpath_for(
+            tag, *predicates, class_=class_, for_=for_, **attrs
+        )
         xpath = self.xpath + '/' + xpath
         return Selection(self.browser, xpath)
 
@@ -196,7 +209,9 @@ class Selector(Selection):
     def __init__(self, browser=Browser()):
         super().__init__(browser, '.')
 
-    def abs_select(self, tag=None, *predicates, cls=None, **attrs):
+    def abs_select(
+        self, tag=None, *predicates, class_=None, for_=None, **attrs
+    ):
         ''' Make the selection absolute.
 
             It works like `select` but it restricts the selection
@@ -205,12 +220,14 @@ class Selector(Selection):
             >>> sQ.abs_select()
             sQ /*
 
-            >>> sQ.abs_select('li', attr('href').endswith('.pdf'), cls='cool', id='uniq')
+            >>> sQ.abs_select('li', attr('href').endswith('.pdf'), class_='cool', id='uniq')
             sQ /li[@class='cool'][ends-with(@href, '.pdf')][@id='uniq']
         '''
-        xpath = self._select_xpath_for(tag, *predicates, cls=cls, **attrs)
+        xpath = self._select_xpath_for(
+            tag, *predicates, class_=class_, for_=for_, **attrs
+        )
         xpath = '/' + xpath
         return Selection(self.browser, xpath)
 
     def pprint(self):
-        return "sQ - nothing selected"
+        print("sQ - nothing selected")

@@ -48,21 +48,21 @@ Select all the list items:
 The list items of the `"secondary"` list:
 
 ```python
->>> sQ.select(cls='secondary').select('li').pprint()
+>>> sQ.select(class_='secondary').select('li').pprint()
 <li>list item 4</li>
 <li>list item 5</li>
 <li>list item 6</li>
 ```
 
 Note how the last `select('li')` is relative to the first
-`select(cls='secondary')` and the selection finds the elements
+`select(class_='secondary')` and the selection finds the elements
 at any *depth*.
 
 You can select the list items that are direct *children*
 of the selected `"secondary"` list using `children`:
 
 ```python
->>> sQ.select(cls='secondary').children('li').pprint()
+>>> sQ.select(class_='secondary').children('li').pprint()
 <li>list item 4</li>
 <li>list item 5</li>
 ```
@@ -71,7 +71,7 @@ If no argument is given, `children` returns all the direct children
 of the previous selected element:
 
 ```python
->>> sQ.select(cls='secondary').children().pprint()
+>>> sQ.select(class_='secondary').children().pprint()
 <li>list item 4</li>
 <li>list item 5</li>
 <ul value="2">
@@ -144,8 +144,8 @@ the first element of *each* element of `sel`.
 
 ## Predicates
 
-As you guessed `cls` and `id` are shortcuts to select only the elements
-that have a particular value for `class` and `id`.
+As you guessed `class_` and `id` are shortcuts to select only the elements
+that have a particular value for `class` and `id`. Same for `for_`.
 
 Here is another example using another keyword argument:
 
@@ -169,7 +169,8 @@ regardless of their values will be selected:
 </ul>
 ```
 
-> Note: you cannot do this for `cls` but keep reading for a workaround.
+> Note: you cannot do this for `class_` or `for_` but keep
+> reading for a workaround.
 
 More complex *predicates* can be build with `Attr` (for attributes) and
 `Value` (for values)

@@ -65,12 +65,12 @@ Internally this works modifying the web page adding the CSS class
 `sQ-highlight`. You can retrieve them later selecting by class:
 
 ```python
->>> sQ.select(cls='sQ-highlight').pprint()
+>>> sQ.select(class_='sQ-highlight').pprint()
 <a href="" class="sQ-highlight">Nav item</a>
 <a href="" class="sQ-highlight">Nav item again</a>
 <a href="" class="sQ-highlight">Nav item again</a>
 
->>> sQ.select(cls='sQ-highlight').count()
+>>> sQ.select(class_='sQ-highlight').count()
 3
 ```
 
@@ -78,8 +78,8 @@ To remove all the highlight just run
 
 ```python
 >>> sQ.browser.highlight_off()
->>> sQ.select(cls='sQ-highlight').pprint() # and nothing is found
->>> sQ.select(cls='sQ-highlight').count()
+>>> sQ.select(class_='sQ-highlight').pprint() # and nothing is found
+>>> sQ.select(class_='sQ-highlight').count()
 0
 ```
 
