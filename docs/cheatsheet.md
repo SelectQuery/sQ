@@ -1,7 +1,7 @@
 Taken from https://devhints.io/xpath#class-check
 
 ```python
->>> from selectq import Selector, Attr as attr, Value as val
+>>> from selectq import Selector, Attr as attr, Value as val, Text
 >>> sQ = Selector()
 ```
 
@@ -82,6 +82,15 @@ sQ .//a[contains(@rel, 'help')]
 ```
 
 > Note: it would be nice but sadly you cannot do `"help" in attr('rel')`
+> Python enforces the return value of `in` to be boolean and that
+> breaks the illusion. `sQ` will fail with a descriptive error:
+
+```python
+>>> sQ.select('help' in attr('rel'))        # byexample: +tags
+Traceback (most recent call last):
+<...>
+Exception: Sorry 'foo in attr' is not supported. Use 'attr.contains(foo)' instead.
+```
 
 ## Siblings
 
@@ -102,10 +111,10 @@ sQ .//h1/following-sibling::[@id='id']
 >>> sQ.select('h1').that('not(@id)')
 sQ .//h1[not(@id)]
 
->>> sQ.select('button').that(val("text()") == 'Submit')
+>>> sQ.select('button').that(Text == 'Submit')
 sQ .//button[text() = 'Submit']
 
->>> sQ.select('button').that(val("text()").contains('Go'))
+>>> sQ.select('button').that(Text.contains('Go'))
 sQ .//button[contains(text(), 'Go')]
 
 >>> sQ.select('product').that((attr("price") > 2.50) & (attr("price") < 5))

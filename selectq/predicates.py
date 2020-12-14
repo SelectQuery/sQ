@@ -69,6 +69,11 @@ class Value:
 
         return tmp
 
+    def __contains__(self, s):
+        raise Exception(
+            "Sorry 'foo in attr' is not supported. Use 'attr.contains(foo)' instead."
+        )
+
     def __gt__(self, s):
         s = self._group(s)
         return Value("{} > {}".format(self, s), require_parentesis=True)
