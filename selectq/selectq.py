@@ -1,4 +1,5 @@
 from lxml import etree
+import contextlib
 from .browsers import Browser, _browser_wrapper
 from .predicates import Value, Attr
 from .interactions import InteractionMixin
@@ -203,6 +204,33 @@ class Selection(InteractionMixin):
 
     def __repr__(self):
         return 'sQ ' + str(self)
+
+    @contextlib.contextmanager
+    def switched(self):
+        ''' Context manager that switch to the selected frame when
+            entering to the context and return to the previous frame on
+            exit.
+
+            The current selection must contain one and only one element
+            and this element must be a valid frame like element like
+            'iframe'.
+            '''
+        elems = self.web_elements()
+        if len(elems) != 1:
+            if len(elems) == 0:
+                raise Exception(
+                    "No frame was selected so you cannot switch to it."
+                )
+            else:
+                raise Exception(
+                    "More than one element was selected so you cannot switch to the frame."
+                )
+
+        self.browser.driver.switch_to.frame(elems[0])
+        try:
+            yield self
+        finally:
+            self.browser.driver.switch_to.parent_frame()
 
 
 class Selector(Selection):
