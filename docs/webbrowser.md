@@ -61,6 +61,15 @@ open the browser with `headless=False` to see something!
 >>> sQ.select('a', val('text()').contains('Nav')).highlight()
 ```
 
+<!--
+This extra wait is needed because after the highlight() we will search
+for the highlight's class. This class is added by highlight() but it is
+also removed and re-added repeatedly so any subsequent check may or may
+not find the class.
+Adding a little wait fixes this.
+>>> import time; time.sleep(2) # byexample: +timeout=5
+-->
+
 Internally this works modifying the web page adding the CSS class
 `sQ-highlight`. You can retrieve them later selecting by class:
 
