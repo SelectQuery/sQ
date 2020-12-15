@@ -154,3 +154,32 @@ class Attr(Value):
 
 
 Text = Value('text()')
+
+
+class Cond:
+    def __init__(self, sel, cnt, sym, op2):
+        if not isinstance(cnt, int):
+            raise TypeError(
+                "A selection can be compared only with integers but '{}' was received"
+                .format(type(cnt))
+            )
+
+        if cnt < 0:
+            raise ValueError(
+                "Only non-negative numbers can be used but '{}' was received.".
+                format(cnt)
+            )
+
+        if sym not in ('==', '!=', '>', '>=', '<', '<='):
+            raise ValueError("Operator '{}' unknown.".format(sym))
+
+        self.sel = sel
+        self.cnt = cnt
+        self.sym = sym
+        self.op2 = op2
+
+    def __repr__(self):
+        return "Condition count({}) {} {}".format(self.sel, self.sym, self.cnt)
+
+    def __bool__(self):
+        return self.op2(self.sel.count(), self.cnt)

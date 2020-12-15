@@ -1,7 +1,7 @@
 from lxml import etree
-import contextlib
+import contextlib, operator
 from .browsers import Browser, _browser_wrapper
-from .predicates import Value, Attr
+from .predicates import Value, Attr, Cond
 from .interactions import InteractionMixin
 '''
 >>> from selectq import FileBrowser, Selector, Attr as attr, Value as val
@@ -198,6 +198,24 @@ class Selection(InteractionMixin):
     def __or__(self, other):
         xpath = "({}) | ({})".format(self.xpath, other.xpath)
         return Selection(self.browser, xpath)
+
+    def __eq__(self, cnt):
+        return Cond(self, cnt, '==', operator.eq)
+
+    def __ne__(self, cnt):
+        return Cond(self, cnt, '!=', operator.ne)
+
+    def __lt__(self, cnt):
+        return Cond(self, cnt, '<', operator.lt)
+
+    def __le__(self, cnt):
+        return Cond(self, cnt, '<=', operator.le)
+
+    def __gt__(self, cnt):
+        return Cond(self, cnt, '>', operator.gt)
+
+    def __ge__(self, cnt):
+        return Cond(self, cnt, '>=', operator.ge)
 
     def __str__(self):
         return self.xpath
