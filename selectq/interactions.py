@@ -63,7 +63,10 @@ class InteractionMixin:
             elems = self.web_elements()
             elem_cnt = len(elems)
             if single and elem_cnt != 1:
-                raise Exception()
+                raise Exception(
+                    'Unexpected count. Expected 1 but selected {}.'.
+                    format(elem_cnt)
+                )
 
             for el in elems:
                 el.click()
