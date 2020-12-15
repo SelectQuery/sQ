@@ -1,3 +1,14 @@
+import string
+
+_translate_to_upper_table = dict(
+    zip(string.ascii_lowercase, string.ascii_uppercase)
+)
+
+_translate_to_lower_table = dict(
+    zip(string.ascii_uppercase, string.ascii_lowercase)
+)
+
+
 class Value:
     def __init__(self, val, require_parentesis=False):
         self.val = val
@@ -68,6 +79,27 @@ class Value:
         tmp = tmp.contains(word)
 
         return tmp
+
+    def lower(self):
+        return self.translate(_translate_to_lower_table)
+
+    def upper(self):
+        return self.translate(_translate_to_upper_table)
+
+    def translate(self, table):
+        if isinstance(table, dict):
+            pairs = table.items()
+        else:
+            raise NotImplementedError(
+                "Non dictionary like tables are not supported yet"
+            )
+
+        src, dst = (''.join(t) for t in zip(*pairs))
+        if "'" in src or "'" in dst:
+            raise NotImplementedError(
+                "Single quote in the table is not supported yet"
+            )
+        return Value("translate({}, '{}', '{}')".format(self, src, dst))
 
     def __contains__(self, s):
         raise Exception(
