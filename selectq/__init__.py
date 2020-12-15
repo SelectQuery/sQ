@@ -26,6 +26,6 @@ try:
     from .selectq import Selection, Selector
     from .browsers import FileBrowser, WebBrowser
     from .predicates import Attr, Value, Text
-    from .shortcuts import open_browser
+    from .shortcuts import open_browser, wait_for
 except SystemError:
     pass  # this happens when importing from setup.py

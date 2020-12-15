@@ -1,5 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver import Proxy
+import time
+from base64 import b64decode
 
 FIREFOX_PREFERENCES = {
     "dom.popup_maximum": 0,
@@ -82,3 +84,53 @@ def open_browser(
     sQ.browser.get(url)
 
     return sQ
+
+
+def wait_for(cnd, *, step=1, timeout=30, take_screenshot=False):
+    ''' Wait for the given condition to be true checking every <step> seconds
+        and waiting up to <timeout> seconds.
+
+        Raises TimeoutError if the condition is not met.
+
+        If <take_screenshot> is True, a base64 encoded PNG image of the
+        screen is taken on timeout and saved in the exception under
+        the 'screenshot' attribute.
+
+        If <take_screenshot> is a string, the screenshot is saved to disk
+        where <take_screenshot> is the path to the file. The image is still
+        saved in the exception.
+
+        '''
+    from .selectq import Selection
+    if isinstance(cnd, Selection):
+        raise TypeError(
+            "Make the check explicit: 'selection != 0' for example"
+        )
+
+    from .predicates import Cond
+    if not isinstance(cnd, Cond):
+        raise TypeError(
+            "Expected a condition, instead received '{}'.".format(type(cnd))
+        )
+
+    hold = bool(cnd)
+    sleep = time.sleep
+    left = timeout
+    while not hold and left > 0:
+        sleep(step)
+        left -= step
+        hold = bool(cnd)
+
+    if not hold:
+        err = TimeoutError(
+            "{} is still false after {} secs.".format(cnd, timeout)
+        )
+        if take_screenshot:
+            err.screenshot = cnd.sel.browser.driver.get_screenshot_as_base64()
+            if isinstance(take_screenshot, str):
+                with open(take_screenshot, 'wb') as f:
+                    f.write(b64decode(err.screenshot.encode('ascii')))
+
+        raise err
+
+    return

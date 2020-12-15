@@ -14,7 +14,7 @@ In the case of Firefox, it is
 Check also [Selenium quick reference](https://www.selenium.dev/documentation/en/webdriver/driver_requirements/#quick-reference)
 
 ```python
->>> from selectq import open_browser, Value as val, Attr as attr
+>>> from selectq import open_browser, Value as val, Attr as attr, Text
 >>> import os.path
 
 >>> url = 'file://' + os.path.abspath('./test/ds/dashboard.html')
@@ -90,6 +90,20 @@ To remove all the highlight just run
 >>> sQ.select(class_='sQ-highlight').pprint() # and nothing is found
 >>> sQ.select(class_='sQ-highlight').count()
 0
+```
+
+What about AJAX? Modern web pages are asynchronous so we cannot click in
+a button to open a form and expect to interact with it immediately.
+
+The page needs time to load the form!
+
+That is where `wait_for` comes in:
+
+```python
+>>> from selectq import wait_for
+>>> sQ.select(Text.lower() == 'reports').click()
+
+>>> wait_for(sQ.select(Text.lower() == 'section title') >= 1)      # byexample: +timeout=35
 ```
 
 Don't forget to close the browser at the end:
