@@ -1,4 +1,4 @@
-
+# sQ (Select Query)
 Interact with web pages programmatically and painless from Python.
 
 `selectq`, or `sQ` for short, is a Python library that aims to simplify
