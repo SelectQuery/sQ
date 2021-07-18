@@ -27,5 +27,5 @@ try:
     from .browsers import FileBrowser, WebBrowser
     from .predicates import Attr, Value, Text
     from .shortcuts import open_browser, wait_for
-except SystemError:
+except ImportError:
     pass  # this happens when importing from setup.py
