@@ -1,3 +1,5 @@
+# Tutorial: Local file (`FileBrowser`)
+
 So what is `selectq` (`sQ` for short)?
 
 It is a simple way to find and interact with elements of a web page.
@@ -15,7 +17,12 @@ But first we need to us a browser to fetch the page:
 ```
 
 `sQ` currently supports a *static* browser which can read web pages
-and XML like files locally.
+and XML like files locally without running a real browser.
+
+> Note: If you want to scrap a real web page, use `open_browser` method
+> to start a Firefox, a Chrome or other supported browser.
+>
+> See a [full example here](https://github.com/SelectQuery/sQ/blob/master/README.md).
 
 Any browser has associated a `selector` object, the main way to interact
 with the web page that the browser is, well, browsing.
@@ -306,4 +313,8 @@ predicates.
 </ul>
 ```
 
+## Much more
+
+Take a look at the [XPATH Cheatsheet](https://github.com/SelectQuery/sQ/blob/master/docs/cheatsheet.md)
+using `selectq`.
 

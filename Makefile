@@ -10,7 +10,7 @@ deps-dev: deps
 	pip install -r requirements-dev.txt
 
 test: format-test
-	byexample -l python -o '+ -tags' --ff selectq/selectq.py docs/basic.md docs/cheatsheet.md docs/webbrowser.md
+	byexample -l python -o '+ -capture' --ff selectq/selectq.py README.md docs/basic.md docs/cheatsheet.md
 
 
 ## Formatting
