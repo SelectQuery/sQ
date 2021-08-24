@@ -136,6 +136,17 @@ Both links will work, so we pick just the first and we move on
 >>> book_link[1].click()
 ```
 
+If you want to check the count before interacting with, you can use an
+`expected` value:
+
+```python
+>>> headers = sQ.select('tr').select('th').expects(7)
+>>> headers = sQ.select('tr').select('th').expects('>1')
+>>> headers = sQ.select('tr').select('th').expects('=1')
+<...>
+Exception: Expected a count of =1 but we found 7 for <...>
+```
+
 `selectq` supports
 [indexing, ranges and iterations](https://github.com/SelectQuery/sQ/blob/master/docs/cheatsheet.md)
 too. See also an example of `FileBrowser` [here](https://github.com/SelectQuery/sQ/blob/master/docs/filebrowser.md).

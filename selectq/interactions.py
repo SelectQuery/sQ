@@ -1,6 +1,7 @@
 import json
 import requests
 import os.path
+import operator
 
 
 class InteractionMixin:
@@ -168,3 +169,58 @@ class InteractionMixin:
     def count(self):
         jscall = 'return elems.length;'
         return self.browser.js_call(self.xpath, jscall)
+
+    def expects(self, expected_count):
+        cnt = self.count()
+
+        if isinstance(expected_count, int):
+            is_good = cnt == expected_count
+
+        elif isinstance(expected_count, str):
+            expected_count = expected_count.strip()
+            prefix2 = expected_count[:2]
+            op2 = {
+                '<=': operator.le,
+                '>=': operator.ge,
+                '==': operator.eq,
+                '!=': operator.ne,
+            }
+
+            op2 = op2.get(prefix2)
+
+            prefix1 = expected_count[:1]
+            op1 = {
+                '<': operator.lt,
+                '=': operator.eq,
+                '>': operator.gt,
+            }
+
+            op1 = op1.get(prefix1)
+
+            # The order of these checks is important. We need to check
+            # op2 first because it has the longest prefix.
+            # If we match op1 first, the '<' will match '<=3' and it shouldn't
+            if op2:
+                op = op2
+                val = expected_count[2:]
+            else:
+                op = op1
+                val = expected_count[1:]
+
+            if op is None:
+                raise ValueError(f"Unknown expected value '{expected_count}'.")
+
+            val = int(val)
+
+            is_good = op(cnt, val)
+        else:
+            raise TypeError(
+                f"Unknown expected object '{type(expected_count)}'. Expected an integer for exact count or a string like '<=3' or '> 42'."
+            )
+
+        if not is_good:
+            raise Exception(
+                f"Expected a count of {expected_count} but we found {cnt} for {self}."
+            )
+
+        return cnt
