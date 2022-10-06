@@ -118,7 +118,7 @@ class InteractionMixin:
             with a WebElement may end in an error (exception) if the element
             is not available after the selection.
             '''
-        return self.browser.driver.find_elements_by_xpath(self.xpath)
+        return self.browser.driver.find_elements('xpath', self.xpath)
 
     def download(self, dest_folder='.'):
         ''' Pluck the href or src attributes of the selected elements
@@ -223,4 +223,4 @@ class InteractionMixin:
                 f"Expected a count of {expected_count} but we found {cnt} for {self}."
             )
 
-        return cnt
+        return self
