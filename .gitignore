@@ -5,3 +5,4 @@ __pycache__
 driver/
 *driver.log
 dist/
+goodprox*
