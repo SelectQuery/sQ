@@ -160,11 +160,46 @@ class InteractionMixin:
 
         return fnames
 
-    def text(self):
-        return self.pluck('textContent')
+    def text(self, inner=False):
+        ''' Return all the text elements inside the selected nodes
+            concatenated (one single string per node).
+
+            This text includes the text of all the elements inside
+            the selected nodes.
+
+            If only the text of the selected nodes are needed (and
+            not of the children's), pass inner=True.
+        '''
+        return self.pluck('innerText' if inner else 'textContent')
 
     def html(self):
         return self.pluck('outerHTML')
+
+    def describe(self, props=['id', 'name', 'type', 'className', 'href']):
+        ''' Describe the selected node reading some of its attributes and
+            pretty printing them.
+
+            Under the hood this calls `self.pluck` so the same
+            attributes can be obtained separately.
+
+            By default a set of predefined properties/attributes are read.
+            You can change them if needed.
+        '''
+        ret = []
+        for tag, *vals in self.pluck('tagName', *props):
+            desc = [f"tag: {tag}"]
+            for p, v in zip(props, vals):
+                if not v:
+                    continue
+
+                if p == 'className':
+                    p = 'class'
+
+                desc.append(f' - {p}: <{v}>')
+
+            ret.extend(desc)
+
+        print('\n'.join(ret))
 
     def count(self):
         jscall = 'return elems.length;'

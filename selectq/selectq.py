@@ -4,7 +4,7 @@ from .browsers import Browser, _browser_wrapper
 from .predicates import Value, Attr, Cond
 from .interactions import InteractionMixin
 '''
->>> from selectq import FileBrowser, Selector, Attr as attr, Value as val
+>>> from selectq import FileBrowser, Selector, Attr as attr, Value as val  # byexample: +pass
 >>> browser = FileBrowser()
 >>> sQ = Selector(browser)
 '''
@@ -22,9 +22,12 @@ class Selection(InteractionMixin):
         self.browser.pprint(self.xpath)
 
     def _select_xpath_for(
-        self, tag, *predicates, class_=None, for_=None, **attrs
+        self, tag, *predicates, class_=None, for_=None, _axis=None, **attrs
     ):
         xpath = ''
+        if _axis:
+            xpath += _axis
+
         if tag is not None:
             # we accept a selection instead of a tag
             if isinstance(tag, Selection):
@@ -108,6 +111,74 @@ class Selection(InteractionMixin):
         )
         xpath = self.xpath + '/' + xpath
         return Selection(self.browser, xpath)
+
+    def siblings(
+        self,
+        tag=None,
+        *predicates,
+        class_=None,
+        for_=None,
+        direction='both',
+        **attrs
+    ):
+        ''' Select any siblings.
+
+            A sibling node is a node which parent is the same than the current
+            selected node.
+
+            >>> sQ.siblings()
+            sQ (./following-sibling::*) | (./preceding-sibling::*)
+
+            >>> sQ.siblings('li', class_='cool', id='uniq', direction='following')
+            sQ ./following-sibling::li[@class='cool'][@id='uniq']
+
+            The <direction> can be:
+
+             - following: to select siblings that appear *after* the current node
+             - preceding: to select siblings that appear *before* the current node
+             - both: to select both siblings directions.
+
+            Note: complex queries are not well supported by the browsers.
+            Things like sQ.siblings('li', attr('href').endswith('.pdf'))
+            may not work.
+        '''
+        if direction not in ('both', 'following', 'preceding'):
+            raise ValueError(
+                f"Invalid direction '{direction}' for siblings selection."
+            )
+
+        if direction in ('both', 'following'):
+            xpath = self._select_xpath_for(
+                tag,
+                *predicates,
+                class_=class_,
+                for_=for_,
+                _axis='following-sibling::',
+                **attrs
+            )
+            xpath = self.xpath + '/' + xpath
+            s1 = Selection(self.browser, xpath)
+
+        if direction in ('both', 'preceding'):
+            xpath = self._select_xpath_for(
+                tag,
+                *predicates,
+                class_=class_,
+                for_=for_,
+                _axis='preceding-sibling::',
+                **attrs
+            )
+            xpath = self.xpath + '/' + xpath
+            s2 = Selection(self.browser, xpath)
+
+        if direction == 'both':
+            return (s1 | s2)
+        elif direction == 'following':
+            return s1
+        elif direction == 'preceding':
+            return s2
+        else:
+            assert False
 
     def has_children(self, selection=None):
         ''' Select the elements that have children specified by <selection>.

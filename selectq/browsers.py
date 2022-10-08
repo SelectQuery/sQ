@@ -265,7 +265,7 @@ class WebBrowser(Browser):
     def pprint(self, xpath):
         ''' Pretty print the html elements selected by xpath.
 
-            The optional <sep> cna be used to separate the elements
+            The optional <sep> can be used to separate the elements
             but keep in mind that a newline is always enforced.
 
             Note: if xpath selects the tags "html" or "body" the
