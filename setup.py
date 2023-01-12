@@ -59,7 +59,7 @@ setup(
 
     keywords='xml xpath, html',
 
-    packages=['selectq'],
+    packages=find_packages(),
     data_files=[("", ["LICENSE"])],
     package_data={'selectq':["gadgets/*"]}
 )
